@@ -27,6 +27,17 @@ import Layout from '@/layout'
 // 公共路由
 export const constantRoutes = [
   {
+    path: '/event',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/event',
+        component: () => import('@/views/event/index.vue')
+      }
+    ]
+  },
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,
