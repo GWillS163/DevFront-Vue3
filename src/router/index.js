@@ -38,6 +38,17 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/puzzleCracker',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/puzzleCracker',
+        component: () => import('@/views/puzzleCracker/index.vue')
+      }
+    ]
+  },
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,
