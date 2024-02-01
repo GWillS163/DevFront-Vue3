@@ -10,7 +10,8 @@
           <el-icon v-else class="avatar-uploader-icon" >
             <Plus />
           </el-icon>
-        </el-upload> 
+        </el-upload>
+        <!-- upload --> 
         <p v-for="(img, i) in srcList" :key="img" class="scrollbar-demo-item">
           <el-image style="max-width: 1000px;" :src="img" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
             :initial-index="4" fit="cover" @click="showResult(i)" />
@@ -22,6 +23,11 @@
     
     <el-button type="primary" @click="showResult('output')">Show default</el-button>
   </el-row>
+  <!-- <form :action="upload.url" method="post" enctype="multipart/form-data">
+    <label for="file-upload">Choose file to upload:</label>
+    <input type="file" id="file-upload" name="file">
+    <input type="submit" value="Upload">
+  </form> -->
   <el-row>
     <el-container>
       <el-image style="max-width: 1000px;" v-if="resultImg != failedText" :src="resultImg" :zoom-rate="1.2"
@@ -96,7 +102,7 @@ export default defineComponent({
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: 'http://localhost:8080/puzzle-cracker/upload',
+        url: 'http://192.168.40.249:8080/puzzle-cracker/upload',
         // 上传的文件列表
         fileList: []
       },
