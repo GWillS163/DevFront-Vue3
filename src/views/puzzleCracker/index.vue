@@ -3,7 +3,9 @@
     <el-scrollbar>
       <div class="scrollbar-flex-content"> 
         <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
-        :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress" :headers="upload.headers"
+        :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress"
+         :headers="upload.headers"
+          :data="upload.data"
          
          :before-upload="beforeAvatarUpload">
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
@@ -64,7 +66,9 @@ const beforeAvatarUpload = (rawFile) => {
   }
   return true
 }
-const output = "..\\..\\src\\assets\\images\\output.jpg"
+const imgPrefix = "http://localhost:3000/"
+
+const output = "http://localhost:3000/outputs/default.jpg"
 
 export default defineComponent({
   /* eslint-disable */
@@ -82,7 +86,8 @@ export default defineComponent({
       'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
       'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
       'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg', 
-    ]
+    ] 
+    
     return {
       currentSelect: null,
       url,
@@ -104,9 +109,15 @@ export default defineComponent({
         // 上传的地址
         url: 'http://192.168.40.249:8080/puzzle-cracker/upload',
         // 上传的文件列表
-        fileList: []
+        fileList: [],
+        data: {
+          targetMain: "D:\\Project\\puzzleCracker\\puzzleCases\\fully\\full_combine.jpg"
+        }
       },
     }
+  },
+  mounted() {
+    // this.resultImg = "http://localhost:3000/outputs/building_multi_result.jpg"
   },
   methods: {
     showResult(index) {
@@ -115,23 +126,12 @@ export default defineComponent({
         this.resultImg = failedText
       }
       this.resultImg = this.resultList[index]
-    },
-    async sendRequest() {
-      try {
-        const response = await axios.get('http://localhost:8080/puzzle-cracker/upload'
-        );
-        console.log(response.data);
-        alert(response.data)
-        // 这里处理你的数据
-      } catch (error) {
-        console.error(error);
-        // 这里处理错误
-      }
-    },
+    },  
     handleAdd() {
       // ...
       this.upload.fileList = [];
     },
+
 
     handleUpdate(row) {
       // ...
@@ -147,14 +147,26 @@ export default defineComponent({
       this.status = 'uploading'
     },
     // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
+    handleFileSuccess(response) {
       console.log(response)
+      // if (response.code !== "200") {
+      //   // this.$message.error('上传失败');
+      //   return;
+      // }
+      if (response.message !== 'success') {
+        alert('上传失败,' + response.message);
+        return;
+      }
+
+      //  "outputs/" +
+      this.resultImg = imgPrefix + response.fileUrl;
+      this.resultImg = "http://localhost:3000/outputs/building_multi_result.jpg"
       this.upload.isUploading = false;
       // this.resultImg = response.fileUrl; 
-      this.showResult("output")
-
-      // refresh page
-      this.$router.go(0)
+      // this.showResult("output")
+ 
+      // // refresh page
+      // this.$router.go(0)
 
     }
     // ...其他方法
@@ -176,8 +188,7 @@ export default defineComponent({
   width: 100%;
   height: 200px;
 }
-</style>
-<style scoped>
+
 .demo-image__error .image-slot {
   font-size: 30px;
 }
@@ -236,9 +247,7 @@ demo-image__error .block {
   height: 100px;
   display: block;
 }
-</style>
 
-<style>
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
