@@ -14,6 +14,7 @@ NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/register'];
 
 router.beforeEach((to, from, next) => {
+  next()
   NProgress.start()
   if (getToken()) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title)

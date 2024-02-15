@@ -1,29 +1,106 @@
 <template>
-  <el-row>
-    <el-scrollbar>
-      <div class="scrollbar-flex-content"> 
-        <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
-        :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress"
-         :headers="upload.headers"
-          :data="upload.data"
-         
-         :before-upload="beforeAvatarUpload">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon" >
-            <Plus />
-          </el-icon>
-        </el-upload>
-        <!-- upload --> 
-        <p v-for="(img, i) in srcList" :key="img" class="scrollbar-demo-item">
-          <el-image style="max-width: 1000px;" :src="img" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
-            :initial-index="4" fit="cover" @click="showResult(i)" />
-        </p>
-      </div>
-    </el-scrollbar>
+  <el-row :gutter="20">
+    <el-col :span="12">
+      <el-tabs type="border-card">
+        <el-tab-pane label="Main">
+          <el-row :gutter="20">
+            <!-- <el-col :span="6">
+              <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
+                :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress" :headers="upload.headers"
+                :data="upload.data" :before-upload="beforeAvatarUpload"> 
+                <el-icon   class="avatar-uploader-icon">
+                  <Plus />
+                </el-icon>
+              </el-upload>
+              <b>Upload Sub Image</b>
+            </el-col> -->
+            <el-col :span="7">
+              <img style="max-width: 100%;" :src="currentSelect.subImage" class="avatar" />
+              <b>Current Sub Image</b>
+            </el-col>
+            <el-col :span="4">
+              <el-button type="primary" @click="showResult('output')" style="width: 100%; margin-top: 50%;">
+                <el-icon>
+                  <Search />
+                </el-icon>
+                Pwn
+                <el-icon>
+                  <Right />
+                </el-icon> 
+              </el-button>
+            </el-col>
+            <el-col :span="7">
+              <img style="max-width: 100%;" :src="currentSelect.fullImage" class="avatar" />
+              <b>Current Full Image</b>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </el-col>
+    <el-col :span="12">
+      <el-tabs type="border-card">
+        <el-tab-pane label="Sub_Image">
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
+                :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress" :headers="upload.headers"
+                :data="upload.data" :before-upload="beforeAvatarUpload">
+                <img style="height: 100px;" v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon">
+                  <Plus />
+                </el-icon>
+              </el-upload>
+            </el-col>
+            <el-col :span="20">
+              <el-scrollbar>
+                <div class="scrollbar-flex-content">
+                  <!-- upload -->
+                  <p v-for="(img, i) in sub_images" :key="img" class="scrollbar-demo-item"
+                    style="height: 100px; width:auto; max-width:20%;">
+                    <el-image :src="img" fit="scale-down" @click="selectSubImage(i)" />
+                  </p>
+                </div>
+              </el-scrollbar>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
 
-    <h1>Parsed Result:     {{ status }}</h1> 
-    
-    <el-button type="primary" @click="showResult('output')">Show default</el-button>
+        <el-tab-pane label="Full_Image">
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
+                :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress" :headers="upload.headers"
+                :data="upload.data" :before-upload="beforeAvatarUpload">
+                <img style="height: 100px;" v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon">
+                  <Plus />
+                </el-icon>
+              </el-upload>
+            </el-col>
+            <el-col :span="20">
+              <el-scrollbar>
+                <div class="scrollbar-flex-content">
+                  <!-- upload -->
+                  <p v-for="(img, i) in full_images" :key="img" class="scrollbar-demo-item"
+                    style="height: 100px; width:auto; max-width:20%;">
+                    <el-image :src="img" fit="scale-down" @click="selectFullImage(i)" />
+                  </p>
+                </div>
+              </el-scrollbar>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </el-col>
+  </el-row>
+
+  <el-row>
+    <el-col>
+      <h1>Parsed Result: {{ status }}</h1>
+    </el-col>
+    <el-col>
+
+    </el-col>
   </el-row>
   <!-- <form :action="upload.url" method="post" enctype="multipart/form-data">
     <label for="file-upload">Choose file to upload:</label>
@@ -37,12 +114,11 @@
       <el-text v-else class="mx-1" size="large">No result found</el-text>
     </el-container>
   </el-row>
- 
+
 
   <el-dialog :visible.sync="dialogVisible">
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-
 </template>
 <script>
 import { defineComponent, ref } from 'vue'
@@ -54,7 +130,7 @@ import { Plus } from '@element-plus/icons-vue'
 
 
 const imageUrl = ref('')
- 
+
 
 const beforeAvatarUpload = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
@@ -85,11 +161,14 @@ export default defineComponent({
       'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
       'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
       'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-      'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg', 
-    ] 
-    
+      'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
+    ]
+
     return {
-      currentSelect: null,
+      currentSelect: {
+        subImage: 0,
+        fullImage: 0,
+      },
       url,
       srcList,
       status: 'unstart',
@@ -100,6 +179,14 @@ export default defineComponent({
         "2": 'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
         "output": output,
       }),
+      sub_images: [
+        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
+        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
+        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
+      ],
+      full_images: [
+        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg'
+      ],
       // 上传参数
       upload: {
         // 是否禁用上传
@@ -126,7 +213,15 @@ export default defineComponent({
         this.resultImg = failedText
       }
       this.resultImg = this.resultList[index]
-    },  
+    },
+    selectFullImage(index) {
+      this.upload.data.targetMain = this.full_images[index]
+      this.currentSelect.fullImage = this.full_images[index]
+    },
+    selectSubImage(index) {
+      this.upload.data.targetSub = this.sub_images[index]
+      this.currentSelect.subImage = this.sub_images[index]
+    },
     handleAdd() {
       // ...
       this.upload.fileList = [];
@@ -164,7 +259,7 @@ export default defineComponent({
       this.upload.isUploading = false;
       // this.resultImg = response.fileUrl; 
       // this.showResult("output")
- 
+
       // // refresh page
       // this.$router.go(0)
 

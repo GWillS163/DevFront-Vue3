@@ -42,7 +42,7 @@ import ImagePreview from "@/components/ImagePreview"
 // 自定义树选择组件
 import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
-import DictTag from '@/components/DictTag'
+import DictTag from '@/components/DictTag' 
 
 const app = createApp(App)
 
