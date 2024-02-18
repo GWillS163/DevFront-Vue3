@@ -45,6 +45,10 @@ export const constantRoutes = [
       {
         path: '/puzzleCracker',
         component: () => import('@/views/puzzleCracker/index.vue')
+      },
+      {
+        path: '/demo',
+        component: () => import('@/views/puzzleCracker/demo.vue')
       }
     ]
   },
