@@ -3,11 +3,13 @@
     <el-col :span="12">
       <el-tabs type="border-card">
         <el-tab-pane label="Main">
-          <el-row :gutter="20"> 
+          <el-row :gutter="20">
             <el-col :span="7">
-              <div v-if="!currentSelect.subImage" style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
+              <div v-if="!currentSelect.subImage"
+                style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
               </div>
-              <el-image v-else="currentSelect.subImage" fit="cover" style="width: 100px; height: 100px" :src="imgPrefix + currentSelect.subImage.file_path" class="avatar"  />
+              <el-image v-else="currentSelect.subImage" fit="cover" style="width: 100px; height: 100px"
+                :src="imgPrefix + currentSelect.subImage.file_path" class="avatar" />
               <b>Current Sub Image</b>
             </el-col>
             <el-col :span="4">
@@ -18,13 +20,15 @@
                 Pwn
                 <el-icon>
                   <Right />
-                </el-icon> 
+                </el-icon>
               </el-button>
             </el-col>
             <el-col :span="7">
-              <div v-if="!currentSelect.fullImage" style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
+              <div v-if="!currentSelect.fullImage"
+                style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
               </div>
-              <el-image v-if="currentSelect.fullImage" style="max-width: 100%; " :src="imgPrefix + currentSelect.fullImage.file_path" class="avatar" />
+              <el-image v-if="currentSelect.fullImage" style="max-width: 100%; "
+                :src="imgPrefix + currentSelect.fullImage.file_path" class="avatar" />
               <b>Current Full Image</b>
             </el-col>
           </el-row>
@@ -45,7 +49,7 @@
                   </el-form-item>
                 </el-form-item>
               </el-form>
-            </el-col> 
+            </el-col>
           </el-row>
         </el-tab-pane>
 
@@ -57,14 +61,10 @@
           <el-row :gutter="20">
             <el-col :span="4">
               <a style="font-size:12px">Upload:</a>
-              <el-upload drag class="avatar-uploader" 
-                :action="upload.subImageUrl"  
-                style="background-color: #13ce66"
-                :on-success="uploadedSubImage" 
-                :on-progress="handleFileUploadProgress" 
-                :headers="upload.headers"
+              <el-upload drag class="avatar-uploader" :action="upload.subImageUrl" style="background-color: #13ce66"
+                :on-success="uploadedSubImage" :on-progress="handleFileUploadProgress" :headers="upload.headers"
                 :data="upload.SubImageData">
-                <el-image style="height: 100px;" v-if="imageUrl" :src="imageUrl"  />
+                <el-image style="height: 100px;" v-if="imageUrl" :src="imageUrl" />
                 <el-icon v-else class="avatar-uploader-icon">
                 </el-icon>
               </el-upload>
@@ -74,8 +74,9 @@
                 <div class="scrollbar-flex-content">
                   <!-- upload -->
                   <p v-for="(img, i) in sub_images" :key="img" class="scrollbar-demo-item"
-                    style="height: 100px; width:auto; max-width:20%;"> 
-                    <el-image :src=" imgPrefix + img.file_path " fit="cover"  style="width: 100px; height: 150px" @click="selectSubImage(i)" />
+                    style="height: 100px; width:auto; max-width:20%;">
+                    <el-image :src="imgPrefix + img.file_path" fit="cover" style="width: 100px; height: 150px"
+                      @click="selectSubImage(i)" />
                   </p>
                 </div>
               </el-scrollbar>
@@ -87,12 +88,11 @@
           <el-row :gutter="20">
             <el-col :span="4">
               <a style="font-size:12px">Upload:</a>
-              <el-upload drag class="avatar-uploader" 
-              :action="upload.url" :show-file-list="true"
-                style="background-color: #13ce66"
-                :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress" :headers="upload.headers"
-                :data="upload.FullImageData">
-                  <el-image style="height: 100px;" :fit="cover" v-if="imageUrl" :src="imgPrefix +  imageUrl" class="avatar" />
+              <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
+                style="background-color: #13ce66" :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress"
+                :headers="upload.headers" :data="upload.FullImageData">
+                <el-image style="height: 100px;" :fit="cover" v-if="imageUrl" :src="imgPrefix + imageUrl"
+                  class="avatar" />
                 <el-icon v-else class="avatar-uploader-icon">
                   <Plus />
                 </el-icon>
@@ -104,7 +104,8 @@
                   <!-- upload -->
                   <p v-for="(img, i) in full_images" :key="img" class="scrollbar-demo-item"
                     style="height: 100px; width:auto; max-width:20%;">
-                    <el-image :src=" imgPrefix + img.file_path " fit="contain"  style="width: 150px; height: 100px" @click="selectFullImage(i)" /> 
+                    <el-image :src="imgPrefix + img.file_path" fit="contain" style="width: 150px; height: 100px"
+                      @click="selectFullImage(i)" />
                   </p>
                 </div>
               </el-scrollbar>
@@ -113,34 +114,39 @@
         </el-tab-pane>
       </el-tabs>
     </el-col>
-  </el-row>
-  {{ upload.PwnData }}
+  </el-row>  
   <el-row>
-    <el-col>
-      <h1>Parsed Result: {{ status }}</h1>
+    <el-col :span="10" style="height: 30rem;overflow-y: auto;">
+      <table >
+        <tr>
+          <th>Sub Image</th>
+          <th>Full Image</th>
+          <th>Acc</th>
+          <th>Output Image</th>
+        </tr>
+        <tr v-for="item in history" :key="item.id">
+          <td><el-image :src="imgPrefix + item.sub_image" style="width: 100px; height: 100px"  fit="cover"/></td>
+          <td><el-image :src="imgPrefix + item.full_image" style="width: 80px; height: 100px"  fit="contain"/></td>
+          <td style="width: 10px;">{{ item.accuracy }}</td>
+          <td ><el-image :src="imgPrefix + item.output_image" style="width: 180px; height: 80px"  fit="contain"
+            @click="selectResultImage(imgPrefix + item.output_image)" 
+            /></td>
+        </tr>
+      </table> 
     </el-col>
-    <el-col>
-
+    <el-col :span="14">
+      <el-image :src="resultImg" style="width: 100%;" 
+            :preview-src-list="[resultImg]"
+             />
     </el-col>
   </el-row>
   <!-- <form :action="upload.url" method="post" enctype="multipart/form-data">
     <label for="file-upload">Choose file to upload:</label>
     <input type="file" id="file-upload" name="file">
     <input type="submit" value="Upload">
-  </form> -->
-  <el-row>
-    <el-container>
-      <el-image :url=" 'imgPrefix' + '/outputs/building_multi_result.jpg'"/>
-      <!-- <el-image style="max-width: 1000px;" v-if="resultImg != failedText" :src="resultImg" :zoom-rate="1.2"
-        :preview-src-list="[resultImg]" :max-scale="7" :min-scale="0.2" :initial-index="4" fit="cover" />
-      <el-text v-else class="mx-1" size="large">No result found</el-text> -->
-    </el-container>
-  </el-row>
+  </form> --> 
 
-
-  <el-dialog :visible.sync="dialogVisible">
-    <el-image width="100%" :src="dialogImageUrl" alt=""/>
-  </el-dialog>
+ 
 </template>
 <script>
 import { defineComponent, ref } from 'vue'
@@ -196,7 +202,7 @@ export default defineComponent({
       autoTriggerSubImage: false,
       autoTriggerFullImage: false
     })
-const imgPrefix = "http://localhost:3000/"
+    const imgPrefix = "http://localhost:3000/"
     return {
       currentSelect: {
         subImage: 0,
@@ -206,16 +212,11 @@ const imgPrefix = "http://localhost:3000/"
       url,
       srcList,
       status: 'unstart',
-      resultImg: ref(output),
-      resultList: ref({
-        "0": 'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-        "1": 'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-        "2": 'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-        "output": output,
-      }),
+      resultImg: ref(""),
       sub_images: [],
       full_images: [],
       setting,
+      history: [],
       // 上传参数
       upload: {
         // 是否禁用上传
@@ -229,9 +230,11 @@ const imgPrefix = "http://localhost:3000/"
         // 上传的文件列表
         fileList: [],
         PwnData: {
-          subImage: "default",
-          fullImage: "default",
-          accuracy: 0.78
+          SubImage: 0,
+          FullImage: 0,
+          SubImageId: 0,
+          FullImageId: 0,
+          Accuracy: 0.78
         },
         SubImageData: {
           type: "Sub_Image"
@@ -240,16 +243,15 @@ const imgPrefix = "http://localhost:3000/"
           type: "Full_Image"
         }
       },
-    cropper: null
+      cropper: null
     }
   },
   mounted() {
-    this.init_Sub_Images()
-    this.init_Full_Images()
+    this.refresh();
   },
   methods: {
-    async init_Sub_Images() { 
-      await axios.get(getSubImageUrl).then((res) => { 
+    async init_Sub_Images() {
+      await axios.get(getSubImageUrl).then((res) => {
         this.sub_images = res.data
       }).catch((err) => {
         console.log(err)
@@ -259,6 +261,13 @@ const imgPrefix = "http://localhost:3000/"
       await axios.get(getFullImageUrl).then((res) => {
         this.full_images = res.data
       }).catch((err) => {
+        console.log(err) 
+      })
+    },
+    async get_history() {
+      await axios.get(host + '/puzzleCracker/getHistory').then((res) => {
+        this.history = res.data
+      }).catch((err) => {
         console.log(err)
       })
     },
@@ -266,45 +275,40 @@ const imgPrefix = "http://localhost:3000/"
       await this.get_Full_Images();
       this.selectFullImage(this.full_images.length - 1)
     },
-    showResult(index) {
-      console.log(index)
-      if (!index in Object.keys(this.resultList)) {
-        this.resultImg = failedText
-      }
-      this.resultImg = this.resultList[index]
+    async refresh() {
+      this.init_Sub_Images()
+      this.init_Full_Images()
+      this.get_history()
+    },
+    selectResultImage(ResultImg) {
+      this.resultImg = ResultImg 
     },
     selectFullImage(index) {
-      this.upload.PwnData.fullImage = this.full_images[index].file_path
+      this.upload.PwnData.FullImageId = this.full_images[index].id
+      this.upload.PwnData.FullImage = this.full_images[index].file_path
       this.currentSelect.fullImage = this.full_images[index]
     },
     selectSubImage(index) {
-      this.upload.PwnData.subImage = this.sub_images[index].file_path
+      this.upload.PwnData.SubImageId = this.sub_images[index].id
+      this.upload.PwnData.SubImage = this.sub_images[index].file_path
       this.currentSelect.subImage = this.sub_images[index]
     },
-    handleAdd() {
-      // ...
-      this.upload.fileList = [];
-    },
+
     pwn() {
-      this.status = 'pwning'
-      console.log(this.currentSelect.subImage, this.currentSelect.fullImage) 
-      const data = {
-        subImage: this.currentSelect.subImage,
-        fullImage: this.currentSelect.fullImage,
-        accuracy: 0.78
+      if (this.currentSelect.subImage == 0 || this.currentSelect.fullImage == 0) {
+        alert("Please select sub image and full image")
+        return
       }
-      axios.post(host + '/puzzleCracker/pwn', data).then((res) => {
-        console.log(res)
-        this.resultImg = imgPrefix + res.data.fileUrl
+      this.status = 'pwning'
+
+      axios.post(host + '/puzzleCracker/pwn', this.upload.PwnData).then((res) => { 
+        this.resultImg = this.imgPrefix + res.data.fileUrl
         this.status = 'done'
       }).catch((err) => {
-        console.log(err)
-        this.resultImg = failedText
+        console.log(err) 
         this.status = 'failed'
       })
-      this.init_Sub_Images()
-      this.get_Full_Images()
-
+      this.refresh();
     },
 
 
@@ -335,7 +339,7 @@ const imgPrefix = "http://localhost:3000/"
 
       this.upload.isUploading = false;
       this.status = 'uploaded'
- 
+
 
       //  "outputs/" +
       // this.resultImg = imgPrefix + response.fileUrl;
@@ -348,7 +352,7 @@ const imgPrefix = "http://localhost:3000/"
       // this.$router.go(0)
 
     },
-    uploadedSubImage(response) { 
+    uploadedSubImage(response) {
       this.handleFileSuccess(response)
       this.init_Sub_Images()
       // click last image
