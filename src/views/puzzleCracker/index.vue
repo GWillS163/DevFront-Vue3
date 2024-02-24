@@ -1,221 +1,120 @@
-<template>
+<template>   
+<el-row>
+  <el-col  >
+    <el-text>
+      <h1>拼图求解器 </h1>
+      <h4>Puzzle Cracker / パズル　チットツール - Ver 0.8.3</h4>
+    </el-text>
+  </el-col>
+</el-row>
+ 
+<el-row>
+  <el-col :span="2">
+    進度
+  </el-col>
+<el-col :span="18"> 
+  <el-progress 
+  :percentage="progress"
+  :stroke-width="15"
+  status="success" 
+  striped
+  :indeterminate="progress > 0"
+/>
+</el-col>
+<el-col :span="2">
+  <el-button type="primary" @click="refresh">Refresh</el-button>
+</el-col>
+</el-row>
   <el-row :gutter="20">
-    <el-col :span="12">
+    <el-col :xs="24" :sm="24" :md="0">
       <el-tabs type="border-card">
-        <el-tab-pane label="Main">
-          <el-row :gutter="20">
-            <el-col :span="7">
-              <div v-if="!currentSelect.subImage"
-                style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
-              </div>
-              <el-image v-else="currentSelect.subImage" fit="cover" style="width: 100px; height: 100px"
-                :src="imgPrefix + currentSelect.subImage.file_path" class="avatar" />
-              <b>Current Sub Image</b>
-            </el-col>
-            <el-col :span="4">
-              <el-button type="primary" @click="pwn('output')" style="width: 100%; margin-top: 50%;">
-                <el-icon>
-                  <Search />
-                </el-icon>
-                Pwn
-                <el-icon>
-                  <Right />
-                </el-icon>
-              </el-button>
-            </el-col>
-            <el-col :span="7">
-              <div v-if="!currentSelect.fullImage"
-                style="height: 100px; width: 100px; background-color: lightgrey; display: flex; align-items: center; justify-content: center;">
-              </div>
-              <el-image v-if="currentSelect.fullImage" style="max-width: 100%; "
-                :src="imgPrefix + currentSelect.fullImage.file_path" class="avatar" />
-              <b>Current Full Image</b>
-            </el-col>
-          </el-row>
+        <LeftTabs :current-select="currentSelect" :status="status" @pwn="pwn" :hostFront="hostFront" :upload="upload"
+          :settings="settings"  @changePwn="changePwn" new-upload @uploadedSubImage="uploadedSubImage"/>
+        <el-tab-pane label="History">
+          <History :history="history" :hostFront="hostFront" @selectResultImage="selectResultImage" />
         </el-tab-pane>
-        <el-tab-pane label="Settings">
-          <el-row :gutter="20">
-            <el-col :span="24">
-              <el-form :model="upload.PwnData" label-width="90px">
-                <el-form-item label="Accuracy: ">
-                  <el-slider v-model="upload.PwnData.accuracy" :min="0" :max="1" :step="0.01" show-input />
-                </el-form-item>
-                <el-form-item label="Auto Pwn after upload: " label-width="100px">
-                  <el-form-item label="Sub_Image" label-width="90px">
-                    <el-switch v-model="setting.autoTriggerSubImage" active-color="#13ce66" inactive-color="#ff4949" />
-                  </el-form-item>
-                  <el-form-item label="Full_Image" label-width="90px">
-                    <el-switch v-model="setting.autoTriggerFullImage" active-color="#13ce66" inactive-color="#ff4949" />
-                  </el-form-item>
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
+        <RightTabs :sub_images="sub_images" :full_images="full_images" :settings="settings" :hostFront="hostFront"
+          :upload="upload" @selectSubImage="selectSubImage" @selectFullImage="selectFullImage"
+          @uploadedFullImage="uploadedFullImage" @uploadedSubImage="uploadedSubImage" /> 
 
       </el-tabs>
-    </el-col>
-    <el-col :span="12">
-      <el-tabs type="border-card">
-        <el-tab-pane label="Sub_Image">
-          <el-row :gutter="20">
-            <el-col :span="4">
-              <a style="font-size:12px">Upload:</a>
-              <el-upload drag class="avatar-uploader" :action="upload.subImageUrl" style="background-color: #13ce66"
-                :on-success="uploadedSubImage" :on-progress="handleFileUploadProgress" :headers="upload.headers"
-                :data="upload.SubImageData">
-                <el-image style="height: 100px;" v-if="imageUrl" :src="imageUrl" />
-                <el-icon v-else class="avatar-uploader-icon">
-                </el-icon>
-              </el-upload>
-            </el-col>
-            <el-col :span="20">
-              <el-scrollbar>
-                <div class="scrollbar-flex-content">
-                  <!-- upload -->
-                  <p v-for="(img, i) in sub_images" :key="img" class="scrollbar-demo-item"
-                    style="height: 100px; width:auto; max-width:20%;">
-                    <el-image :src="imgPrefix + img.file_path" fit="cover" style="width: 100px; height: 150px"
-                      @click="selectSubImage(i)" />
-                  </p>
-                </div>
-              </el-scrollbar>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-
-        <el-tab-pane label="Full_Image">
-          <el-row :gutter="20">
-            <el-col :span="4">
-              <a style="font-size:12px">Upload:</a>
-              <el-upload drag class="avatar-uploader" :action="upload.url" :show-file-list="true"
-                style="background-color: #13ce66" :on-success="handleFileSuccess" :on-progress="handleFileUploadProgress"
-                :headers="upload.headers" :data="upload.FullImageData">
-                <el-image style="height: 100px;" :fit="cover" v-if="imageUrl" :src="imgPrefix + imageUrl"
-                  class="avatar" />
-                <el-icon v-else class="avatar-uploader-icon">
-                  <Plus />
-                </el-icon>
-              </el-upload>
-            </el-col>
-            <el-col :span="20">
-              <el-scrollbar>
-                <div class="scrollbar-flex-content">
-                  <!-- upload -->
-                  <p v-for="(img, i) in full_images" :key="img" class="scrollbar-demo-item"
-                    style="height: 100px; width:auto; max-width:20%;">
-                    <el-image :src="imgPrefix + img.file_path" fit="contain" style="width: 150px; height: 100px"
-                      @click="selectFullImage(i)" />
-                  </p>
-                </div>
-              </el-scrollbar>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </el-col>
-  </el-row>  
-  <el-row>
-    <el-col :span="10" style="height: 30rem;overflow-y: auto;">
-      <table >
-        <tr>
-          <th>Sub Image</th>
-          <th>Full Image</th>
-          <th>Acc</th>
-          <th>Output Image</th>
-        </tr>
-        <tr v-for="item in history" :key="item.id">
-          <td><el-image :src="imgPrefix + item.sub_image" style="width: 100px; height: 100px"  fit="cover"/></td>
-          <td><el-image :src="imgPrefix + item.full_image" style="width: 80px; height: 100px"  fit="contain"/></td>
-          <td style="width: 10px;">{{ item.accuracy }}</td>
-          <td ><el-image :src="imgPrefix + item.output_image" style="width: 180px; height: 80px"  fit="contain"
-            @click="selectResultImage(imgPrefix + item.output_image)" 
-            /></td>
-        </tr>
-      </table> 
-    </el-col>
-    <el-col :span="14">
-      <el-image :src="resultImg" style="width: 100%;" 
-            :preview-src-list="[resultImg]"
-             />
     </el-col>
   </el-row>
-  <!-- <form :action="upload.url" method="post" enctype="multipart/form-data">
-    <label for="file-upload">Choose file to upload:</label>
-    <input type="file" id="file-upload" name="file">
-    <input type="submit" value="Upload">
-  </form> --> 
 
- 
+  <el-row>
+    <el-col :xs="0" :sm="0" :md="12">
+      <el-tabs type="border-card">
+        <LeftTabs :current-select="currentSelect" :status="status" @pwn="pwn" :hostFront="hostFront" :upload="upload"
+          :settings="settings" @changePwn="changePwn" @uploadedSubImage="uploadedSubImage"/>
+      </el-tabs>
+    </el-col>
+    <el-col :xs="0" :sm="0" :md="12">
+      <el-tabs type="border-card">
+        <RightTabs :sub_images="sub_images" :full_images="full_images" :settings="settings" :hostFront="hostFront"
+          :upload="upload" @selectSubImage="selectSubImage" @selectFullImage="selectFullImage"
+          @uploadedFullImage="uploadedFullImage" @uploadedSubImage="uploadedSubImage" /> 
+      </el-tabs>
+    </el-col>
+  </el-row>
+
+  <el-row>
+    <el-col :xs="0" :sm="0" :md="10" style="height: 30rem;overflow-y: auto;">
+      <History :history="history" :hostFront="hostFront" @selectResultImage="selectResultImage" />
+    </el-col>
+    <el-col :xs="24" :sm="24" :md="14">
+      <!-- <el-image :src="resultImg" style="width: 100%;" :preview-src-list="[resultImg]" /> -->
+      <img :src="resultImg" style="width: 100%;" @click="openWindowImg" />
+      <!-- add a html raw image tage -->
+      
+      <div v-if="!resultImg" style="background-color: grey; width: 100%; height: 100px; display: flex; align-items: center; justify-content: center;">
+        No Result Image
+      </div>
+    </el-col>
+  </el-row>
 </template>
 <script>
 import { defineComponent, ref } from 'vue'
+import RightTabs from './rightTabs.vue';
+import LeftTabs from './leftTabs.vue';
+import History from './history.vue';
+
 import axios from 'axios'
 import { getToken } from "@/utils/auth";
-const failedText = "No result found"
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 
-import Cropper from 'cropperjs';
-import { fabric } from 'fabric';
+const host = "http://192.168.40.249"
+const hostBack = host + ":8080"
+const hostFront = host + ":3000"
 
+const getSubImageUrl = hostBack + "/puzzleCracker/getSubImage"
+const getFullImageUrl = hostBack + "/puzzleCracker/getFullImage"
 
-
-const imageUrl = ref('')
-const host = "http://192.168.40.249:8080"
-
-const getSubImageUrl = host + "/puzzleCracker/getSubImage"
-const getFullImageUrl = host + "/puzzleCracker/getFullImage"
-
-
-const beforeAvatarUpload = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Avatar picture must be JPG format!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('Avatar picture size can not exceed 2MB!')
-    return false
-  }
-  return true
-}
-
-const output = "http://localhost:3000/outputs/default.jpg"
 
 export default defineComponent({
-  /* eslint-disable */
-  setup() {
+  components: {
+    RightTabs, LeftTabs, History
   },
+  /* eslint-disable */
   data() {
-    const url =
-      'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'
-    const srcList = [
-      'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-      'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-      'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-      'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-      'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-      'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-      'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-      'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    ]
-    const setting = ref({
-      autoTriggerSubImage: false,
-      autoTriggerFullImage: false
+    const settings = ref({
+      autoSelectSubImage: true,
+      autoSelectFullImage: true,
+      autoPwn: true,
+      areas: []
     })
-    const imgPrefix = "http://localhost:3000/"
     return {
       currentSelect: {
         subImage: 0,
         fullImage: 0,
       },
-      imgPrefix,
-      url,
-      srcList,
+      progress: 0,
       status: 'unstart',
       resultImg: ref(""),
       sub_images: [],
       full_images: [],
-      setting,
+      settings,
+      hostFront: hostFront,
       history: [],
       // 上传参数
       upload: {
@@ -224,9 +123,9 @@ export default defineComponent({
         // 设置上传的请求头部
         headers: { Authorization: "Bearer " + getToken() },
         // 上传的地址
-        url: host + '/puzzleCracker/upload',
-        subImageUrl: host + '/puzzleCracker/uploadSubImage',
-        fullImageUrl: host + '/puzzleCracker/uploadFullImage',
+        url: hostBack + '/puzzleCracker/upload',
+        subImageUrl: hostBack + '/puzzleCracker/uploadSubImage',
+        fullImageUrl: hostBack + '/puzzleCracker/uploadFullImage',
         // 上传的文件列表
         fileList: [],
         PwnData: {
@@ -253,6 +152,9 @@ export default defineComponent({
     async init_Sub_Images() {
       await axios.get(getSubImageUrl).then((res) => {
         this.sub_images = res.data
+        if (this.settings.autoSelectSubImage) {
+          this.selectSubImage(0)
+        }
       }).catch((err) => {
         console.log(err)
       })
@@ -260,12 +162,15 @@ export default defineComponent({
     async get_Full_Images() {
       await axios.get(getFullImageUrl).then((res) => {
         this.full_images = res.data
+        if (this.settings.autoSelectFullImage) {
+          this.selectFullImage(0)
+        }
       }).catch((err) => {
-        console.log(err) 
+        console.log(err)
       })
     },
     async get_history() {
-      await axios.get(host + '/puzzleCracker/getHistory').then((res) => {
+      await axios.get(hostBack + '/puzzleCracker/getHistory').then((res) => {
         this.history = res.data
       }).catch((err) => {
         console.log(err)
@@ -278,10 +183,37 @@ export default defineComponent({
     async refresh() {
       this.init_Sub_Images()
       this.init_Full_Images()
-      this.get_history()
+      this.get_history() 
     },
-    selectResultImage(ResultImg) {
-      this.resultImg = ResultImg 
+    autoPwn() {
+      // this.refresh();
+      if (this.settings.autoPwn) {
+        this.pwn()
+      }
+    },
+    pwn() {
+      debugger
+      if (this.currentSelect.subImage == 0 || this.currentSelect.fullImage == 0) {
+        alert("Please select sub image and full image")
+        return
+      }
+      this.status = 'pwning'
+      this.progress = 60
+
+      axios.post(hostBack + '/puzzleCracker/pwn', this.upload.PwnData).then((res) => {
+        this.resultImg = hostFront + res.data.fileUrl
+        this.status = 'done'
+
+        if (res.code !== 200 || res.code !== "200") {
+          ElMessage.error('解析失败: ' + res.message);
+          return;
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.status = 'failed'
+      })
+      this.refresh();
+      this.progress = 100
     },
     selectFullImage(index) {
       this.upload.PwnData.FullImageId = this.full_images[index].id
@@ -293,150 +225,51 @@ export default defineComponent({
       this.upload.PwnData.SubImage = this.sub_images[index].file_path
       this.currentSelect.subImage = this.sub_images[index]
     },
-
-    pwn() {
-      if (this.currentSelect.subImage == 0 || this.currentSelect.fullImage == 0) {
-        alert("Please select sub image and full image")
-        return
-      }
-      this.status = 'pwning'
-
-      axios.post(host + '/puzzleCracker/pwn', this.upload.PwnData).then((res) => { 
-        this.resultImg = this.imgPrefix + res.data.fileUrl
-        this.status = 'done'
-      }).catch((err) => {
-        console.log(err) 
-        this.status = 'failed'
-      })
-      this.refresh();
+    selectResultImage(ResultImg) {
+      this.resultImg = ResultImg
     },
-
-
-    handleUpdate(row) {
-      // ...
-      this.upload.fileList = [{ name: this.form.fileName, url: this.form.filePath }];
+    uploadedSubImage(response) {
+      console.log(response)
+      this.init_Sub_Images()
+      // click last image
+      this.selectSubImage(0)
     },
-    // 文件提交处理
-    submitUpload() {
-      this.$refs.upload.submit();
+    uploadedFullImage(response) {
+      console.log(response)
+      this.get_Full_Images()
+      // click last image
+      this.selectFullImage(0)
     },
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
-      this.status = 'uploading'
-    },
-    // 文件上传成功处理
     handleFileSuccess(response) {
       console.log(response)
       // if (response.code !== "200") {
       //   // this.$message.error('上传失败');
       //   return;
-      // }
-      if (response !== 'success') {
-        alert('上传失败,' + response);
-        return;
-      }
+      // } 
 
-      this.upload.isUploading = false;
-      this.status = 'uploaded'
-
-
-      //  "outputs/" +
-      // this.resultImg = imgPrefix + response.fileUrl;
-      // this.resultImg = "http://localhost:3000/outputs/building_multi_result.jpg"
       // this.upload.isUploading = false;
-      // this.resultImg = response.fileUrl; 
-      // this.showResult("output")
+      // this.status = 'uploaded'
 
-      // // refresh page
-      // this.$router.go(0)
+      this.autoPwn(); 
+      this.$refs.upload.clearFiles();
 
     },
-    uploadedSubImage(response) {
-      this.handleFileSuccess(response)
-      this.init_Sub_Images()
-      // click last image
-      this.selectSubImage(this.sub_images.length - 1)
+    changePwn() {
+      if (this.settings.autoPwn) {
+        this.settings.autoSelectSubImage = true
+        this.settings.autoSelectFullImage = true
+      }
     },
-    uploadedFullImage(response) {
-      this.handleFileSuccess(response)
-      this.get_Full_Images()
-      // click last image
-      this.selectFullImage(this.full_images.length - 1)
-    },
-    // ...其他方法
+    openWindowImg() {
+      window.open(this.resultImg)
+    }
+
   },
 
 })
 </script>
 
 <style scoped>
-.demo-image__error .image-slot {
-  font-size: 30px;
-}
-
-.demo-image__error .image-slot .el-icon {
-  font-size: 30px;
-}
-
-.demo-image__error .el-image {
-  width: 100%;
-  height: 200px;
-}
-
-.demo-image__error .image-slot {
-  font-size: 30px;
-}
-
-.demo-image__error .image-slot .el-icon {
-  font-size: 30px;
-}
-
-.demo-image__error .el-image {
-  width: 100%;
-  height: 200px;
-}
-
-demo-image__error .block {
-  padding: 30px 0;
-  text-align: center;
-  border-right: solid 1px var(--el-border-color);
-  display: inline-block;
-  width: 49%;
-  box-sizing: border-box;
-  vertical-align: top;
-}
-
-.demo-image__error .demonstration {
-  display: block;
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.demo-image__error .el-image {
-  padding: 0 5px;
-  max-width: 300px;
-  max-height: 200px;
-  width: 100%;
-  height: 200px;
-}
-
-.demo-image__error .image-slot {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
-  font-size: 30px;
-}
-
-.demo-image__error .image-slot .el-icon {
-  font-size: 30px;
-}
-
 .avatar-uploader .avatar {
   width: 178px;
   height: 100px;
