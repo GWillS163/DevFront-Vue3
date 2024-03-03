@@ -81,4 +81,6 @@ app.use(ElementPlus, {
   size: Cookies.get('size') || 'default'
 })
 
+app.provide('hostUrl', 'http://192.168.40.249:3000')
+
 app.mount('#app')

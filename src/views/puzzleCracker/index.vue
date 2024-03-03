@@ -80,16 +80,15 @@ import History from './history.vue';
 
 import axios from 'axios'
 import { getToken } from "@/utils/auth";
-import { ElMessage } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus' 
 
-const host = "http://192.168.40.249"
-const hostBack = host + ":8080"
-const hostFront = host + ":3000"
 
 const getSubImageUrl = hostBack + "/puzzleCracker/getSubImage"
 const getFullImageUrl = hostBack + "/puzzleCracker/getFullImage"
 
+const host = "http://192.168.40.249"
+const hostBack = host + ":8080"
+const hostFront = host + ":3000" 
 
 export default defineComponent({
   components: {
