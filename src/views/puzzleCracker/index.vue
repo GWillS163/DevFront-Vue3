@@ -83,12 +83,12 @@ import { getToken } from "@/utils/auth";
 import { ElMessage } from 'element-plus' 
 
 
-const getSubImageUrl = hostBack + "/puzzleCracker/getSubImage"
-const getFullImageUrl = hostBack + "/puzzleCracker/getFullImage"
-
 const host = "http://192.168.40.249"
 const hostBack = host + ":8080"
 const hostFront = host + ":3000" 
+const getSubImageUrl = hostBack + "/puzzleCracker/getSubImage"
+const getFullImageUrl = hostBack + "/puzzleCracker/getFullImage"
+
 
 export default defineComponent({
   components: {
@@ -219,10 +219,13 @@ export default defineComponent({
       this.upload.PwnData.FullImage = this.full_images[index].file_path
       this.currentSelect.fullImage = this.full_images[index]
     },
-    selectSubImage(index) {
+    selectSubImage(index, autoPwn = false) {
       this.upload.PwnData.SubImageId = this.sub_images[index].id
       this.upload.PwnData.SubImage = this.sub_images[index].file_path
       this.currentSelect.subImage = this.sub_images[index]
+      if (autoPwn) {
+        this.pwn()
+      }
     },
     selectResultImage(ResultImg) {
       this.resultImg = ResultImg

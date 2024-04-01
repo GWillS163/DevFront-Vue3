@@ -1,6 +1,5 @@
 <template>
     <div  class="history_table">
-        
     <table>
         <tr>
             <!-- <th>Sub Image</th>

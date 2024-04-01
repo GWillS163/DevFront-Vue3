@@ -37,10 +37,6 @@ export const constantRoutes = [
       }
     ]
   },
-  { 
-      path: '/puzzleCracker',
-      component: () => import('@/views/puzzleCracker/index.vue')
-    } ,
   {
     path: '/redirect',
     component: Layout,
@@ -96,6 +92,22 @@ export const constantRoutes = [
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
+      }
+    ]
+  },
+  // { 
+  //     path: '/puzzleCracker',
+  //     component: () => import('@/views/puzzleCracker/index')
+  // },
+  {
+    path: '/puzzleCracker',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/puzzleCracker/index'),
+        name: 'PuzzleCracker',
+        meta: { title: '拼图破解', icon: 'puzzle' }
       }
     ]
   }

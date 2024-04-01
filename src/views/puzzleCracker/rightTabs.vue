@@ -2,9 +2,13 @@
     <el-tab-pane label="Sub_Image">
       <el-row :gutter="20">
         <el-col :span="4">
+          <el-row>
+            <el-switch v-model="autoPwn" active-text="Pwn" inactive-text="No Pwn" />
+          </el-row>
           <a style="font-size:12px">Upload:</a>
           <el-upload drag class="avatar-uploader" :action="upload.subImageUrl" style="background-color: #13ce66"
             :on-success="uploadedSubImage" :on-progress="handleFileUploadProgress" :headers="upload.headers"
+            multiple
             :data="upload.SubImageData">
             <el-image style="height: 100px;" v-if="imageUrl" :src="imageUrl" />
             <el-icon v-else class="avatar-uploader-icon">
@@ -84,11 +88,13 @@ export default {
   },
   data() {
     return {
+      imageUrl: '',
+      autoPwn: false,
     };
   },
   methods: { 
     selectSubImage(index) {
-      this.$emit('selectSubImage', index)
+      this.$emit('selectSubImage', index, this.autoPwn)
     },
     selectFullImage(index) {
       this.$emit('selectFullImage', index)
